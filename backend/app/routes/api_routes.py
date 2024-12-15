@@ -1,5 +1,10 @@
 from flask import Blueprint, request, jsonify
-from app.models import db,game, move, Arm
+from app.models import Game, Move, Arm
+from app import db
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
 
 bp = Blueprint('api_routes', __name__)
 
@@ -23,13 +28,15 @@ def game_update():
         if field not in data:
             return jsonify({"error": f"Missing field: {field}"}), 400
 
+    logging.info(f"Received data: {data}")  # Log the data
+
     try:
         # Fetch the game
         arm = Arm.query.get(data['arm_id'])            
         if arm and arm.status == "active":  
             game_id = arm.current_game_id
             if game_id:
-                current_game = game.query.get(game_id)
+                current_game = Game.query.get(game_id)
             else:
                 return jsonify({"error": "Game not found"}), 404
         else :
@@ -39,11 +46,12 @@ def game_update():
         current_game.current_fen = data['fen']
         current_game.status = "active"
         # Add the new move to the move table
-        existing_move = move.query.filter_by(game_id=game_id, move_number=data['move_number']).first()  # Check for existing move
+        existing_move = Move.query.filter_by(game_id=game_id, move_number=data['move_number']).first()  # Check for existing move
         if existing_move:
             existing_move.black_move = data['move']  # Update black move if it exists
+            existing_move.fen_after_move=data['fen']
         else:
-            new_move = move(
+            new_move = Move(
                 game_id=game_id,
                 move_number=data['move_number'],
                 white_move=data['move'],  # Add white move for new move
@@ -65,21 +73,23 @@ def initialize_game():
     Endpoint to initialize a new game.
     Expected payload:
     {
-        "arm_id": "ARM1",
+        "arm_id": 1,
         "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
     }
     """
     data = request.json
-
+    
    
     required_fields = ["arm_id", "initial_fen"]
     for field in required_fields:
         if field not in data:
             return jsonify({"error": f"Missing field: {field}"}), 400
 
+    logging.info(f"Received data: {data}")  # Log the data
+
     try:
        
-        new_game = game(
+        new_game = Game(
             arm_id=data['arm_id'],
             current_fen=data['initial_fen'],
             status="active",
@@ -88,10 +98,17 @@ def initialize_game():
         db.session.flush()
     
         arm = Arm.query.get(data["arm_id"])  
-        if arm:
+        
+        if not arm:
+            arm = Arm(
+                id=data["arm_id"],
+                status="active",
+                current_game_id=new_game.id
+            )
+            db.session.add(arm)
+        else :
             arm.status = "active" 
             arm.current_game_id = new_game.id  
-
         db.session.commit()
         return jsonify({"message": "Game initialized successfully", "game_id": new_game.id}), 201
 
@@ -106,6 +123,7 @@ def end_game():
     Endpoint to end a game.
     Expected payload:
     {
+        "arm_id": 1
         "result": "checkmate",  # "checkmate", "stalemate"
         "winner": "player"      # Optional, "arm" or "player", required for "checkmate" 
     }
@@ -115,12 +133,14 @@ def end_game():
     if 'result' not in data or 'arm_id' not in data:
         return jsonify({"error": "Missing 'arm_id' or 'result' field"}), 400
 
+    logging.info(f"Received data: {data}")  # Log the data
+
     try:
         arm = Arm.query.get(data['arm_id'])
         if arm:
             game_id = arm.current_game_id
             if game_id:
-                current_game = game.query.get(game_id)
+                current_game = Game.query.get(game_id)
             else:
                 return jsonify({"error": "Game not found"}), 404
 

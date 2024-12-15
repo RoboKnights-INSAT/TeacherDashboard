@@ -1,7 +1,7 @@
 export interface Game {
-    id: string
+    id: number
     arm_id: number
-    studentName: string
+    student_name: string
     status: 'active' | 'completed'
     n_moves: number
   }
@@ -9,7 +9,7 @@ export interface Game {
   export interface RoboticArm {
     id: string
     status: 'active' | 'idle'
-    gamesPlayed: number
+    games_played: number
   }
   
   export interface StatCardProps {
@@ -26,4 +26,17 @@ export interface Game {
     active_games: Game[];
     all_games: Game[];
     robotic_arms: RoboticArm[];
+  }
+  export interface GameData{
+    id: number;
+    fen: string;
+    student_name?: string;
+    moves: Move[];
+    arm_id: number;
+    status: string;
+  }
+  export interface Move {
+    number: number; 
+    white: string; 
+    black: string; 
   }

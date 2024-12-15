@@ -37,20 +37,22 @@ export function StatsCards({ total_games, total_completed_games, active_games_co
   ]
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      {stats.map((stat, index) => (
-        <div key={index} 
-          className="animate-fade-in" 
-          style={{ animationDelay: `${index * 100}ms` }}
-        >
-          <StatCard
-            title={stat.title}
-            value={stat.value}
-            icon={<div className={`${stat.color}`}>{stat.icon}</div>}
-            iconBgColor={stat.bgColor}
-          />
-        </div>
-      ))}
+    <div className="flex justify-center mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {stats.map((stat, index) => (
+          <div key={index} 
+            className="animate-fade-in" 
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
+            <StatCard
+              title={stat.title}
+              value={stat.value}
+              icon={<div className={`flex justify-center items-center ${stat.color}`}>{stat.icon}</div>}
+              iconBgColor={stat.bgColor}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

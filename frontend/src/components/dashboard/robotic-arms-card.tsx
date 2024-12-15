@@ -1,6 +1,5 @@
 import { MonitorIcon } from 'lucide-react'
 import { RoboticArm } from '@/types'
-import { getStatusColor } from '@/lib/data/mock'
 
 interface RoboticArmsCardProps {
   arms: RoboticArm[]
@@ -21,7 +20,7 @@ export function RoboticArmsCard({ arms }: RoboticArmsCardProps) {
             {arms.map((arm) => (
               <li key={arm.id} className="flex justify-between items-center p-2 hover:bg-gray-100 rounded-lg transition-colors">
                 <div className="flex-1 flex justify-between items-center cursor-pointer">
-                  <span className="font-medium text-gray-900">{arm.id}</span>
+                  <span className="font-medium text-gray-900">ARM# {arm.id}</span>
                   <div className="flex items-center space-x-4">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       arm.status === 'active' ? 'bg-green-50 text-green-700' :
@@ -30,7 +29,7 @@ export function RoboticArmsCard({ arms }: RoboticArmsCardProps) {
                     }`}>
                       {arm.status}
                     </span>
-                    <span className="text-sm text-gray-500">{arm.gamesPlayed} games played</span>
+                    <span className="text-sm text-gray-500">{arm.games_played} games played</span>
                   </div>
                 </div>
               </li>

@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify
-from app.models import db, game, Arm
+from app.models import  Game, Arm
+from app import db
 
 bp = Blueprint('dashboard_routes', __name__)
 
@@ -15,16 +16,18 @@ def dashboard():
     """
     try:
         # Fetch data
-        total_completed_games = game.query.filter_by(status='completed').count()
-        active_games = game.query.filter_by(status='active').all()
+        total_completed_games = Game.query.filter_by(status='completed').count()
+        active_games = Game.query.filter_by(status='active').all()
         active_games_count = len(active_games)
-        total_games = game.query.count()
+        total_games = Game.query.count()
         robotic_arms = Arm.query.all()
-        all_games = game.query.all()
+        all_games = Game.query.all()
 
         # Format data
         active_games_list = [
             {
+                "id": g.id,
+                "n_moves": g.n_moves,
                 "student_name": g.student_name,
                 "current_fen": g.current_fen,
                 "status": g.status
@@ -33,6 +36,8 @@ def dashboard():
 
         all_games_list = [
             {
+                "id": g.id,
+                "n_moves": g.n_moves,
                 "student_name": g.student_name,
                 "current_fen": g.current_fen,
                 "status": g.status
@@ -41,6 +46,7 @@ def dashboard():
 
         robotic_arms_list = [
             {
+                "id": arm.id,
                 "status": arm.status,
                 "games_played": arm.games_played
             } for arm in robotic_arms

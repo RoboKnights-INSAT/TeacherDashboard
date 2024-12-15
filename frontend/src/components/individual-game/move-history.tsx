@@ -8,12 +8,23 @@ interface Move {
 
 interface MoveHistoryProps {
   moves: Move[];
+  status: string;
 }
 
-const MoveHistory: React.FC<MoveHistoryProps> = ({ moves }) => {
+const MoveHistory: React.FC<MoveHistoryProps> = ({ moves, status}) => {
   return (
     <div>
-      <h3 className="text-2xl font-semibold mb-4 text-gray-900">Move History</h3>
+      <div className="flex justify-between">
+        <h3 className="text-2xl font-semibold mb-4 text-gray-900">Move History</h3>
+        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-bold ${
+                        status === 'active' ? 'bg-green-50 text-green-700' :
+                        status === 'completed' ? 'bg-blue-50 text-blue-700' :
+                        'bg-gray-50 text-gray-700'
+                      }`}>
+                        {status}
+                      </span>
+      </div>
+      
       <div className="h-[500px] overflow-y-auto rounded-lg">
         <table className="w-full">
           <thead className="sticky top-0 bg-white">

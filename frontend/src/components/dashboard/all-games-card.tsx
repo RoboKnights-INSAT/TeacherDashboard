@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { DiamondIcon as ChessIcon } from 'lucide-react'
 import { Game } from '@/types'
-import { getStatusColor } from '@/lib/data/mock'
 
 interface AllGamesCardProps {
   all_games: Game[],
@@ -26,7 +25,7 @@ export function AllGamesCard({ all_games, active_games_count }: AllGamesCardProp
             {all_games.map((game) => (
               <li key={game.id} className="flex justify-between items-center p-3 hover:bg-gray-50 rounded-lg transition-colors border border-gray-100">
                 <Link href={`/game/${game.id}`} className="flex-1 flex justify-between items-center">
-                  <span className="font-medium text-gray-900">ARM {game.arm_id}</span>
+                  <span className="font-medium text-gray-900">Game# {game.id}</span>
                   <div className="flex items-center gap-6">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       game.status === 'active' ? 'bg-green-50 text-green-700' :
